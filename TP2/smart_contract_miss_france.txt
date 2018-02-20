@@ -3,8 +3,12 @@ contract MissFrance
 {
     // V
     address public owner;
+    address public winnerMiss;
     mapping(address =>uint8) public voters;
     mapping(address =>uint8) public misses;
+    uint missCount;
+
+    address[] misses_list;
     
     // Modifiers
     modifier isowner()
@@ -18,13 +22,12 @@ contract MissFrance
 
     modifier canVote()
     {
-        if (voters[msg.sender]==0) 
+        if (voters[msg.sender]==1) 
         {
             throw;
             _;
         }
     }
-
 
     // Constructor
     function MissFrance() {
@@ -40,9 +43,30 @@ contract MissFrance
         voters[voter]=1;
     }
     
+    function addVoter(address voter) public {
+        voters[voter]=0;
+    }
+    
+    function addMiss(address miss) public {
+        misses[miss]=0;
+        missCount++;
+        misses_list.push(miss);
+    }
+    
     function vote(address miss) canVote() public {
         voters[msg.sender]--;
         misses[miss]++;
+    }
+    
+    function winner() public {
+        address tmp_miss_winner = misses[0] ;
+        
+        for(uint i=1;i<missCount;i++) {
+            if(misses[misses_list[i]] > tmp_miss_winner ) {
+                tmp_miss_winner = misses[misses_list[i]];
+            }
+        }
+        winnerMiss=tmp_miss_winner;
     }
 
     //    
