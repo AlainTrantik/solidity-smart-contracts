@@ -22,7 +22,7 @@ contract MissFrance
 
     modifier canVote()
     {
-        if (voters[msg.sender]==1) 
+        if (voters[msg.sender]==0) 
         {
             throw;
             _;
