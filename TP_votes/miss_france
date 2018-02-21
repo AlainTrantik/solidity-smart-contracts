@@ -1,44 +1,35 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.18;
 contract MissFrance
 {
-    // V
+    // Variables
     address public owner;
     address public winnerMiss;
     mapping(address =>uint8) public voters;
     mapping(address =>uint8) public misses;
-    uint missCount;
+    uint  public missCount;
 
+    //Array containing the addresses of the misses
     address[] misses_list;
     
     // Modifiers
     modifier isowner()
     {
-       if(msg.sender!=owner)
-        {
-           throw;
-           _;
-        }
+        require(msg.sender == owner);
+        _;
     }
 
-    modifier canVote()
-    {
-        if (voters[msg.sender]==0) 
-        {
-            throw;
-            _;
-        }
+    modifier canVote() {
+        require(voters[msg.sender]==1);
+        _;
     }
 
     // Constructor
-    function MissFrance() {
+    function MissFrance() public {
         owner=msg.sender;
         voters[owner]=1;
     }
     
     // Functions
-    /**
-     * Ajouter les parametres
-     * */
     function giveRightToVote(address voter) public {
         voters[voter]=1;
     }
@@ -47,31 +38,32 @@ contract MissFrance
         voters[voter]=0;
     }
     
-    function addMiss(address miss) public {
+    //Add miss's address in misses and misses_list
+    function addMiss(address miss) isowner() public {
         misses[miss]=0;
         missCount++;
         misses_list.push(miss);
     }
     
     function vote(address miss) canVote() public {
-        voters[msg.sender]--;
+        voters[owner]--;
         misses[miss]++;
     }
     
+    //Find the miss with the higher number of votes
     function winner() public {
-        address tmp_miss_winner = misses[0] ;
+        address tmp_miss_winner = misses_list[0];
         
         for(uint i=1;i<missCount;i++) {
-            if(misses[misses_list[i]] > tmp_miss_winner ) {
-                tmp_miss_winner = misses[misses_list[i]];
+            if(misses[misses_list[i]] > misses[tmp_miss_winner] ) {
+                tmp_miss_winner = misses_list[i];
             }
         }
         winnerMiss=tmp_miss_winner;
     }
 
-    //    
-    function kill() isowner() {
-        delete owner;
-        selfdestruct(msg.sender);
+    //kill function  
+    function kill() isowner() public {
+        selfdestruct(owner);
     }
 }
