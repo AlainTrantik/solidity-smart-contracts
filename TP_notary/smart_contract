@@ -1,0 +1,24 @@
+pragma solidity ^0.4.18;
+
+contract saveOnBlockchain
+{
+        //VARIABLES
+    address public owner;
+    uint private document_hash;
+        // MODIFIER
+     modifier isowner()
+    {
+       require(msg.sender == owner);
+        _;
+    }
+        //CONSTRUCTOR
+    function saveOnBlockchain(uint _document_hash) public
+    {
+        document_hash=_document_hash;
+        owner=msg.sender;
+    }
+    
+    function kill() isowner() public {
+        selfdestruct(owner);
+    }
+}
