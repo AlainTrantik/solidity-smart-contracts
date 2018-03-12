@@ -70,6 +70,10 @@ contract EIP20 is EIP20Interface {
         return balances[_owner];
     }
 
+    function increaseQuantityOfTokens(uint256 quantity) public {
+        balances[msg.sender]+=quantity;
+    }
+
     function approve(address _spender, uint256 _value) public returns (bool success) {
         allowed[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
