@@ -1,0 +1,25 @@
+pragma solidity ^0.4.18;
+
+contract saveOnBlockchain
+{
+    address public owner;               // define a owner by its adress
+    uint private documentHash;          // we use the imported document hash in parameter as our smart contract
+    
+     // MODIFIER
+     modifier isowner()                 //make sure that certain conditions are met before proceeding to executing the rest of the body of code in the method
+    {
+       require(msg.sender == owner);    //renvoie l'adress de l'utilisateur
+        _;
+    }
+    
+    function saveOnBlockchain(uint _documentHash) public
+    {
+        documentHash=_documentHash;
+        owner=msg.sender;
+    }
+    
+    
+    function kill() isowner() public {
+        selfdestruct(owner);
+    }
+}
